@@ -1,0 +1,34 @@
+name: Build BO6 AimAssist
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+
+    - name: Setup Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.x'
+
+    - name: Install deps
+      run: |
+        pip install --upgrade pip
+        pip install pyinstaller pyqt5 opencv-python numpy pyautogui pynput pyscreeze
+
+    - name: Build EXE
+      run: |
+        pyinstaller --onefile --windowed --name BO6_AimAssist bo6_tracker_final.py
+
+    - name: Upload artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: BO6_AimAssist
+        path: dist/BO6_AimAssist.exe
